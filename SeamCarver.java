@@ -1,5 +1,3 @@
-
-
 import edu.princeton.cs.algs4.Picture;
 
 public class SeamCarver {
@@ -11,9 +9,8 @@ public class SeamCarver {
    public SeamCarver(Picture picture){
 	   // create a seam carver object based on the given picture
 	   if(picture==null) throw new NullPointerException();
-	   this.picture= picture;
-	   init();
-	   
+	   this.picture= new Picture(picture);
+	   init();  
 	}
    
    private void init(){
@@ -30,7 +27,8 @@ public class SeamCarver {
    }
    public Picture picture(){
 	   // current picture
-	   return picture;
+	   Picture piccopy = new Picture(this.picture);
+	   return piccopy;
    }
    
    public int width(){
@@ -66,6 +64,7 @@ public class SeamCarver {
 	   }
 	   */
 	   if(pic.length==1) return new int[]{0};
+	   if(pic[0].length==1) return new int[pic.length];
 	   for(int j=0;j<pic[0].length;j++){
 		    dist[0][j]=0;
 	   }
@@ -155,6 +154,7 @@ public class SeamCarver {
 	   }
 	   */
 	  if(pic[0].length==1) return new int[]{0};
+	  if(pic.length==1) return new int[pic[0].length];
 	  transpose();
       int[] rh=findVerticalSeam();
       transpose();
