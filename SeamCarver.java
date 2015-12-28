@@ -1,28 +1,43 @@
 import edu.princeton.cs.algs4.Picture;
 
 public class SeamCarver {
-    private double[][] pic;
+    //private double[][] pic;
     private int[][] path;
     private double[][] dist;
    private Picture picture;	
+   private int transposetimes;
    
    public SeamCarver(Picture picture){
 	   // create a seam carver object based on the given picture
 	   if(picture==null) throw new NullPointerException();
 	   this.picture= new Picture(picture);
+	   transposetimes = 0;
 	   init();  
 	}
    
    private void init(){
-	   pic= new double[picture.height()][picture.width()];
-	   path=new int[picture.height()][picture.width()];
-	   dist=new double[picture.height()][picture.width()];
-	   for(int i=0;i<picture.height();i++){
-		   for(int j=0;j<picture.width();j++){
-			   pic[i][j]=energy(j, i);
-			   path[i][j]=-1;
-			   dist[i][j]=Double.MAX_VALUE;
-		   }	   
+	   if(transposetimes%2 == 0){
+		   //pic= new double[picture.height()][picture.width()];
+		   path=new int[picture.height()][picture.width()];
+		   dist=new double[picture.height()][picture.width()];
+		   for(int i=0;i<picture.height();i++){
+			   for(int j=0;j<picture.width();j++){
+				   //pic[i][j]=energy(j, i);
+				   path[i][j]=-1;
+				   dist[i][j]=Double.MAX_VALUE;
+			   }	   
+		   }
+	   }else{
+		   //pic= new double[picture.width()][picture.height()];
+		   path= new int[picture.width()][picture.height()];
+		   dist=new double[picture.width()][picture.height()];
+		   for(int i=0;i<picture.width();i++){
+			   for(int j=0;j<picture.height();j++){
+				   //pic[i][j]=energy(i, j);
+				   path[i][j]=-1;
+				   dist[i][j]=Double.MAX_VALUE;
+			   }	   
+		   }
 	   }
    }
    public Picture picture(){
@@ -57,74 +72,83 @@ public class SeamCarver {
    }
    
    public int[] findVerticalSeam(){
-	   /*
+	   if(height()==1) return new int[]{0};
+	   if(width()==1) return new int[height()];
+	   //如果transposetimes为奇,就转置
 	   if(transposetimes%2==1){
 		   transpose();
 		   transposetimes++;
 	   }
-	   */
-	   if(pic.length==1) return new int[]{0};
-	   if(pic[0].length==1) return new int[pic.length];
-	   for(int j=0;j<pic[0].length;j++){
+	   return findSeam();
+   }
+   
+   private int[] findSeam(){
+	   
+	   for(int j=0;j<dist[0].length;j++){
 		    dist[0][j]=0;
 	   }
 	   
-	   for(int i=0;i<pic.length-1;i++){
-		   for(int j=0;j<pic[0].length;j++){
+	   for(int i=0;i<dist.length-1;i++){
+		   for(int j=0;j<dist[0].length;j++){
 			   relax(i,j);
 		   }
 	   }
 	   double min=Double.MAX_VALUE; int minindex=-1;
-	   for(int j=0;j<pic[0].length;j++){
-		   if(dist[pic.length-1][j]<min){
-			   min=dist[pic.length-1][j];
+	   for(int j=0;j<dist[0].length;j++){
+		   if(dist[dist.length-1][j]<min){
+			   min=dist[dist.length-1][j];
 			   minindex=j;
 		   }
 	   }
 	   
-	   int[] resultpath= new int[pic.length];
-	   resultpath[pic.length-1]=minindex;
-	   for(int i=pic.length-2;i>=0;i--){
+	   int[] resultpath= new int[path.length];
+	   resultpath[path.length-1]=minindex;
+	   for(int i=dist.length-2;i>=0;i--){
 		   resultpath[i]=path[i+1][minindex];
 		   minindex=resultpath[i];
 	   }
 	   return resultpath;
    }
+   //row i, col j
+   private double energyAt(int i, int j){
+	   if(transposetimes%2 == 0) return energy(j, i);
+	   else return energy(i,j);
+   }
    private void relax(int i, int j){
-	   if(i==pic.length-1){
+	   if(i==dist.length-1){
 		   return;
 	   }
 	   if(j==0){
-		   if(dist[i+1][j]>dist[i][j]+pic[i][j]){
-			   dist[i+1][j]=dist[i][j]+pic[i][j];
+		   if(dist[i+1][j]>dist[i][j]+energyAt(i,j)){
+			   dist[i+1][j]=dist[i][j]+energyAt(i,j);
 			   path[i+1][j]=j;
 		   }
-		   if(dist[i+1][j+1]>dist[i][j]+pic[i][j]){
-			   dist[i+1][j+1]=dist[i][j]+pic[i][j];
+		   if(dist[i+1][j+1]>dist[i][j]+energyAt(i,j)){
+			   dist[i+1][j+1]=dist[i][j]+energyAt(i,j);
 			   path[i+1][j+1]=j;
 		   }
 		   return;
-	   }else if(j==pic[0].length-1){
-		   if(dist[i+1][j]>dist[i][j]+pic[i][j]){
-			   dist[i+1][j]=dist[i][j]+pic[i][j];
+	   }else if(j==dist[0].length-1){
+		   if(dist[i+1][j]>dist[i][j]+energyAt(i,j)){
+			   dist[i+1][j]=dist[i][j]+energyAt(i,j);
 			   path[i+1][j]=j;
 		   }
-		   if(dist[i+1][j-1]>dist[i][j]+pic[i][j]){
-			   dist[i+1][j-1]=dist[i][j]+pic[i][j];
+		   if(dist[i+1][j-1]>dist[i][j]+energyAt(i,j)){
+			   dist[i+1][j-1]=dist[i][j]+energyAt(i,j);
 			   path[i+1][j-1]=j;
 		   }
 		   return;
 	   }else{
-		   if(dist[i+1][j]>dist[i][j]+pic[i][j]){
-			   dist[i+1][j]=dist[i][j]+pic[i][j];
+		   if(dist[i+1][j]>dist[i][j]+energyAt(i,j)){
+			   dist[i+1][j]=dist[i][j]+energyAt(i,j);
 			   path[i+1][j]=j;
 		   }
-		   if(dist[i+1][j-1]>dist[i][j]+pic[i][j]){
-			   dist[i+1][j-1]=dist[i][j]+pic[i][j];
+		   if(dist[i+1][j-1]>dist[i][j]+energyAt(i,j)){
+			   dist[i+1][j-1]=dist[i][j]+energyAt(i,j);
 			   path[i+1][j-1]=j;
 		   }
-		   if(dist[i+1][j+1]>dist[i][j]+pic[i][j]){
-			   dist[i+1][j+1]=dist[i][j]+pic[i][j];
+		   if(dist[i+1][j+1]>dist[i][j]+energyAt(i,j)){
+			   dist[i+1][j+1]=dist[i][j]+energyAt(i,j);
 			   path[i+1][j+1]=j;
 		   }
 		   return;
@@ -133,31 +157,29 @@ public class SeamCarver {
    }
    
    private void transpose(){
-	   double[][] pic2= new double[pic[0].length][pic.length];
+	   //double[][] pic2= new double[pic[0].length][pic.length];
 	   double[][] dist2= new double[dist[0].length][dist.length];
 	   int[][] path2= new int[path[0].length][path.length];
-	   for(int i=0;i<pic2.length;i++){
-		   for(int j=0;j<pic2[0].length;j++){
-			   pic2[i][j]=pic[j][i];
+	   for(int i=0;i<dist2.length;i++){
+		   for(int j=0;j<dist2[0].length;j++){
+			   //pic2[i][j]=pic[j][i];
 			   path2[i][j]=-1;
 			   dist2[i][j]=Double.MAX_VALUE;
 		   }
 	   }
-	   pic=pic2;dist=dist2;path=path2;	   
+	   dist=dist2;path=path2;	   
    }
    
    public int[] findHorizontalSeam(){
-	   /*
+	   
+	  if(width()==1) return new int[]{0};
+	  if(height()==1) return new int[width()];
 	   if(transposetimes%2==0){
 		   transpose();
 		   transposetimes++;
 	   }
-	   */
-	  if(pic[0].length==1) return new int[]{0};
-	  if(pic.length==1) return new int[pic[0].length];
-	  transpose();
-      int[] rh=findVerticalSeam();
-      transpose();
+      int[] rh=findSeam();
+ 
       return rh;
    }
  
@@ -189,6 +211,7 @@ public class SeamCarver {
 	   if(seam.length!=height()||!ifVerticalSeamValid(seam)){
 		    throw new IllegalArgumentException();   
 	   }
+	   
 	   
        Picture rpicture=new Picture(picture.width()-1, picture.height());
        for(int i=0;i<picture.height();i++){
@@ -223,7 +246,5 @@ public class SeamCarver {
        picture=rpicture;
        init();
    }
-   
-	
 
 }
