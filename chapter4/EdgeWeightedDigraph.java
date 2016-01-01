@@ -29,7 +29,6 @@ public class EdgeWeightedDigraph {
 			weight=in.readDouble();
 			edge= new DirectedEdge(a, b, weight);
 			addEdge(edge);
-			E++;
 		}
 	}
 	
@@ -37,6 +36,7 @@ public class EdgeWeightedDigraph {
 
 	public void addEdge(DirectedEdge e){
 		adjs[e.from()].add(e);
+		E++;
 	}
 	
 	public Iterable<DirectedEdge> edges(){

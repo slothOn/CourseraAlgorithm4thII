@@ -3,7 +3,7 @@ import edu.princeton.cs.algs4.Picture;
 public class SeamCarver {
     //private double[][] pic;
     private int[][] path;
-    private double[][] dist;
+    private float[][] dist;
    private Picture picture;	
    private int transposetimes;
    
@@ -19,31 +19,30 @@ public class SeamCarver {
 	   if(transposetimes%2 == 0){
 		   //pic= new double[picture.height()][picture.width()];
 		   path=new int[picture.height()][picture.width()];
-		   dist=new double[picture.height()][picture.width()];
+		   dist=new float[picture.height()][picture.width()];
 		   for(int i=0;i<picture.height();i++){
 			   for(int j=0;j<picture.width();j++){
 				   //pic[i][j]=energy(j, i);
 				   path[i][j]=-1;
-				   dist[i][j]=Double.MAX_VALUE;
+				   dist[i][j]=Float.MAX_VALUE;
 			   }	   
 		   }
 	   }else{
 		   //pic= new double[picture.width()][picture.height()];
 		   path= new int[picture.width()][picture.height()];
-		   dist=new double[picture.width()][picture.height()];
+		   dist=new float[picture.width()][picture.height()];
 		   for(int i=0;i<picture.width();i++){
 			   for(int j=0;j<picture.height();j++){
 				   //pic[i][j]=energy(i, j);
 				   path[i][j]=-1;
-				   dist[i][j]=Double.MAX_VALUE;
+				   dist[i][j]=Float.MAX_VALUE;
 			   }	   
 		   }
 	   }
    }
    public Picture picture(){
 	   // current picture
-	   Picture piccopy = new Picture(this.picture);
-	   return piccopy;
+	   return new Picture(this.picture);
    }
    
    public int width(){
@@ -120,35 +119,35 @@ public class SeamCarver {
 	   }
 	   if(j==0){
 		   if(dist[i+1][j]>dist[i][j]+energyAt(i,j)){
-			   dist[i+1][j]=dist[i][j]+energyAt(i,j);
+			   dist[i+1][j]=(float) (dist[i][j]+energyAt(i,j));
 			   path[i+1][j]=j;
 		   }
 		   if(dist[i+1][j+1]>dist[i][j]+energyAt(i,j)){
-			   dist[i+1][j+1]=dist[i][j]+energyAt(i,j);
+			   dist[i+1][j+1]=(float) (dist[i][j]+energyAt(i,j));
 			   path[i+1][j+1]=j;
 		   }
 		   return;
 	   }else if(j==dist[0].length-1){
 		   if(dist[i+1][j]>dist[i][j]+energyAt(i,j)){
-			   dist[i+1][j]=dist[i][j]+energyAt(i,j);
+			   dist[i+1][j]=(float) (dist[i][j]+energyAt(i,j));
 			   path[i+1][j]=j;
 		   }
 		   if(dist[i+1][j-1]>dist[i][j]+energyAt(i,j)){
-			   dist[i+1][j-1]=dist[i][j]+energyAt(i,j);
+			   dist[i+1][j-1]=(float) (dist[i][j]+energyAt(i,j));
 			   path[i+1][j-1]=j;
 		   }
 		   return;
 	   }else{
 		   if(dist[i+1][j]>dist[i][j]+energyAt(i,j)){
-			   dist[i+1][j]=dist[i][j]+energyAt(i,j);
+			   dist[i+1][j]=(float) (dist[i][j]+energyAt(i,j));
 			   path[i+1][j]=j;
 		   }
 		   if(dist[i+1][j-1]>dist[i][j]+energyAt(i,j)){
-			   dist[i+1][j-1]=dist[i][j]+energyAt(i,j);
+			   dist[i+1][j-1]=(float) (dist[i][j]+energyAt(i,j));
 			   path[i+1][j-1]=j;
 		   }
 		   if(dist[i+1][j+1]>dist[i][j]+energyAt(i,j)){
-			   dist[i+1][j+1]=dist[i][j]+energyAt(i,j);
+			   dist[i+1][j+1]=(float) (dist[i][j]+energyAt(i,j));
 			   path[i+1][j+1]=j;
 		   }
 		   return;
@@ -157,14 +156,14 @@ public class SeamCarver {
    }
    
    private void transpose(){
-	   //double[][] pic2= new double[pic[0].length][pic.length];
-	   double[][] dist2= new double[dist[0].length][dist.length];
+	   
+	   float[][] dist2= new float[dist[0].length][dist.length];
 	   int[][] path2= new int[path[0].length][path.length];
+	   dist=null; path=null;
 	   for(int i=0;i<dist2.length;i++){
 		   for(int j=0;j<dist2[0].length;j++){
-			   //pic2[i][j]=pic[j][i];
 			   path2[i][j]=-1;
-			   dist2[i][j]=Double.MAX_VALUE;
+			   dist2[i][j]=Float.MAX_VALUE;
 		   }
 	   }
 	   dist=dist2;path=path2;	   
@@ -222,6 +221,7 @@ public class SeamCarver {
     		   rpicture.set(j, i, picture.get(j+1, i));
     	   }
        }
+       picture=null;
        picture=rpicture;
        init();
    }
@@ -243,6 +243,7 @@ public class SeamCarver {
     		   rpicture.set(i, j, picture.get(i, j+1));
     	   }
        }
+       picture=null;
        picture=rpicture;
        init();
    }

@@ -1,5 +1,5 @@
 package chapter4;
-//Queue based,坑待填,寻找的似乎仅是环而非负权环
+//Queue based,坑待填,寻找的似乎仅是环而非负权环，添加了isNegative用作检测环是否为负权重
 import chapter1.Queue;
 import chapter1.Stack;
 
@@ -8,13 +8,14 @@ public class BellmanFordSP {
 	private double[] distTo;
 	private DirectedEdge[] edgeTo;
 	private Queue<Integer> queue;
-	private Stack<DirectedEdge> cycle;
+	private Iterable<DirectedEdge> cycle;
 	private boolean[] onQ;//队列中不重复入队
-	private int cost=0;//relax次数
+	private int cost=0;//relax次数，边的relax
 	public BellmanFordSP(EdgeWeightedDigraph G, int s){
 		distTo= new double[G.V()];
 		edgeTo= new DirectedEdge[G.V()];
 		queue= new Queue<Integer>();
+		onQ = new boolean[G.V()];
 		for(int i=0;i<distTo.length;i++){
 			distTo[i]=Double.MAX_VALUE;
 		}
@@ -38,12 +39,12 @@ public class BellmanFordSP {
 					onQ[w] = true;
 				}
 			}
+			cost++;
+			if(cost%G.V() == 0){
+				findNegativeCycle();
+			}
 		}
-		cost++;
-		if(cost%G.V() == 0){
-			findNegativeCycle();
-			if(hasNegativeCycle())	return;
-		}
+		
 	}
 	
 	public double distTo(int v){
@@ -74,7 +75,21 @@ public class BellmanFordSP {
 			}
 		}
 		EdgeWeightedCycleFinder cf= new EdgeWeightedCycleFinder(EWD);
-		cycle= cf.cycle();
+		if(isNegative(cf.cycle())){
+			cycle = cf.cycle();
+		}
+	}
+	
+	public boolean isNegative(Iterable<DirectedEdge> cycle){
+		if(cycle == null) return false;
+		double cycleweight = 0;
+		for(DirectedEdge de:cycle){
+			cycleweight += de.weight();
+		}
+		if(cycleweight<0){
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean hasNegativeCycle(){
