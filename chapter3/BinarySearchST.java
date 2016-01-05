@@ -7,7 +7,7 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
 	private Value[] vals;
 	private int N;
 	public BinarySearchST(int cap){
-		keys=(Key[])new Object[cap];
+		keys=(Key[])new Comparable[cap];
 		vals=(Value[])new Object[cap];
 		N=0;
 	}
@@ -15,7 +15,7 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
 	public void put(Key key, Value val){
 		//put key-value pair into the table (remove key from table if value is null)
 		int rank=rank(key);
-		if(keys[rank].compareTo(key) == 0) {
+		if(keys[rank] != null && keys[rank].compareTo(key) == 0) {
 			vals[rank]=val;
 			return;
 		}
@@ -50,7 +50,7 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
 	}
 	
 	public boolean contains(Key key){
-		//is there a value paired with key?
+		//is there a value paired with key?0
 		return get(key) != null;
 	}
 	
@@ -86,10 +86,10 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
 		int rank=rank(key);
 		return keys[rank];
 	}
-	
+	//仔细分析
 	public int rank(Key key){
 		//number of keys less than key
-		int lo=0, hi=N-1, mid=-1;
+		int lo=0, hi=N-1, mid;
 		while(lo<=hi){
 			mid=(lo+hi)/2;
 			int cmp=key.compareTo(keys[mid]);
@@ -97,7 +97,7 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
 			else if(cmp>0){lo=mid+1;}
 			else{return mid;}
 		}
-		return mid;
+		return lo;
 	}
 	
 	public Key select(int k){
@@ -121,6 +121,7 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
 	
 	public int size(Key lo, Key hi){
 		//number of keys in [lo..hi]
+		if(contains(hi)){return rank(hi)-rank(lo)+1;}//pay attention to this detail
 		return rank(hi)-rank(lo);
 	}
 	
@@ -138,11 +139,7 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
 	
 	public Iterable<Key> keys(){
 		//all the keys in the table
-		Queue<Key> queue=new Queue<Key>();
-		for(Key key:keys){
-			queue.enqueue(key);
-		}
-		return queue;
+		return keys(min(), max());
 	}
 	
 	/**
@@ -150,8 +147,8 @@ public class BinarySearchST<Key extends Comparable<Key>, Value> {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		BinarySearchTree<String,Integer> st;
-		st=new BinarySearchTree<String,Integer>();
+		BinarySearchST<String,Integer> st;
+		st=new BinarySearchST<String,Integer>(100);
 		String[] str={"S","E","A","R","C","H","E","X","A","M","P","L","E"};
 		for(int i=0;i<str.length;i++){
 			st.put(str[i],i);

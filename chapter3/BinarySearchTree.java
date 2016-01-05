@@ -219,7 +219,20 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 	}
 	
 	public int size(Key lo, Key hi){
+		if(contains(hi)) return rank(hi)-rank(lo)+1;
 		return rank(hi)-rank(lo);
+	}
+	
+	public Iterable<Key> allkeys(){
+		Queue<Key> queue=new Queue<Key>();
+		allkeys(root, queue);
+		return queue;
+	}
+	private void allkeys(Node n, Queue<Key> queue){
+		if(n == null) return;
+		allkeys(n.left, queue);
+		queue.enqueue(n.key);
+		allkeys(n.right, queue);
 	}
 	
 	public Iterable<Key> keys(){
@@ -248,7 +261,31 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 		queue.enqueue(n.key);
 		keys(n.right, n.key, hi, queue);
 	}
-	
+	//leetcode practice
+	public void traverse(){
+		//recursision
+		//root=traverse(root);
+		Node n=root;
+		Queue<Node> queue=new Queue<Node>();
+		queue.enqueue(root);
+		while(!queue.isEmpty()){
+			Node next=queue.dequeue();
+			Node temp=next.left;
+			next.left=next.right;
+			next.right=temp;
+			if(next.left != null) queue.enqueue(next.left);
+			if(next.right != null) queue.enqueue(next.right);
+		}
+	}
+	private Node traverse(Node n){
+		if(n == null) return null;
+		Node temp=n.left;
+		n.left=n.right;
+		n.right=temp;
+		traverse(n.left);
+		traverse(n.right);
+		return n;
+	}
 	/**
 	 * @param args
 	 */
@@ -274,7 +311,12 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> {
 			System.out.print(s+" "+st.get(s)+",");
 		}
 		System.out.println();
-		for(String s:st.keys()){
+		for(String s:st.allkeys()){
+			System.out.print(s+" "+st.get(s)+",");
+		}
+		System.out.println();
+		st.traverse();
+		for(String s:st.allkeys()){
 			System.out.print(s+" "+st.get(s)+",");
 		}
 	}
