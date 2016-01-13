@@ -7,41 +7,74 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Queue;
 
 public class Fast {
+	//输出j个点
+	private static void output(Point[] pts, int i, int j, int start){
+		//输出
+		Point[] line=new Point[j+2];
+		for(int k=i-1, t=0;k>=i-1-j;k--, t++){
+			line[t]=pts[k];
+		}
+		Point startpt=null, endpt=null;
+		line[j+1]=pts[start];
+		for(int t=0;t<line.length;t++){
+			if(startpt == null){
+				startpt=line[t];
+			}else{
+				if(startpt.compareTo(line[t])>0){
+					startpt=line[t];
+				}
+			}
+			if(endpt == null){
+				endpt=line[t];
+			}else{
+				if(endpt.compareTo(line[t])<0){
+					endpt=line[t];
+				}
+			}
+			System.out.print(line[t]+"->");
+		}
+		//startpt.drawTo(endpt);
+		System.out.println();
+	}
+	
+	
 	private static void check(Point[] pts, int start){
 		int j=0;
-		for(int i=start+2;i<pts.length;i++){
+		int state=0;//记录左堆
+		int i;//记录右堆
+		for(i=start+2;i<pts.length;i++){
 			if(pts[start].SLOPE_ORDER.compare(pts[i-1], pts[i]) == 0){
 				j++;
 			}else{
 				if(j >= 2){
-					Point[] line=new Point[j+2];
-					for(int k=i-1, t=0;k>=i-1-j;k--, t++){
-						line[t]=pts[k];
+					//检查左堆中是否有共线点
+					/*
+					int m;
+					do{
+						if(state >= start) break;
+						for(m=state;m<start && (pts[start].SLOPE_ORDER.compare(pts[m-1], pts[m]) == 0);m++);
+						state=m;
+					}while(pts[start].SLOPE_ORDER.compare(pts[state-1], pts[i-1])<0);
+					if(pts[start].SLOPE_ORDER.compare(pts[state-1], pts[i-1]) == 0){
+						continue;
 					}
-					Point startpt=null, endpt=null;
-					line[j+1]=pts[start];
-					for(int t=0;t<line.length;t++){
-						if(startpt == null){
-							startpt=line[t];
-						}else{
-							if(startpt.compareTo(line[t])>0){
-								startpt=line[t];
-							}
-						}
-						if(endpt == null){
-							endpt=line[t];
-						}else{
-							if(endpt.compareTo(line[t])<0){
-								endpt=line[t];
-							}
-						}
-						System.out.print(line[t]+"->");
+					*/
+					
+					int m;
+					for(m=state;m<start;m++){
+						if(pts[start].SLOPE_ORDER.compare(pts[m], pts[i-1])>= 0) break;
 					}
-					startpt.drawTo(endpt);
-					System.out.println();
+					state=m;
+					if(pts[start].SLOPE_ORDER.compare(pts[state], pts[i-1]) != 0){
+						output(pts, i, j, start);
+					}
 				}
 				j=0;
 			}
+		}
+		//连续点对在结尾处
+		if(j >= 2){
+			output(pts, i, j, start);
 		}
 	}
 	/**
@@ -60,6 +93,7 @@ public class Fast {
 		}
 		for(int i=0;i<pts.length-3;i++){
 			Arrays.sort(pts, i+1, pts.length, pts[i].SLOPE_ORDER);
+			Arrays.sort(pts, 0, i, pts[i].SLOPE_ORDER);
 			check(pts, i);
 		}
 	}

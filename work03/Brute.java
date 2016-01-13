@@ -36,7 +36,7 @@ public class Brute {
         StdDraw.setXscale(0, 32768);
         StdDraw.setYscale(0, 32768);
         */
-		In in=new In("E:\\Further study in north America\\CS\\algorithmI\\collinear\\input6.txt");
+		In in=new In("E:\\Further study in north America\\CS\\algorithmI\\collinear\\input8.txt");
 		int N=in.readInt();
 		Point[] pts=new Point[N];
 		for(int i=0;i<N;i++){
