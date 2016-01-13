@@ -2,8 +2,6 @@ package chapter2;
 
 import edu.princeton.cs.introcs.In;
 
-
-
 public class InsertionSort {
 	public static void sort(Comparable[] a){
 		for(int i=1;i<a.length;i++){

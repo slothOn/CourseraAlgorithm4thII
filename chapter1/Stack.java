@@ -29,7 +29,9 @@ public class Stack<T> implements Iterable<T>{
     	first=node;
     	N++;
     }
-
+    public T peek(){
+    	return first.item;
+    }
     public T pop(){
     	T item=first.item;
     	first=first.next;
