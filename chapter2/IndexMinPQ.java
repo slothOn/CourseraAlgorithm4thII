@@ -59,8 +59,11 @@ public class IndexMinPQ<Item extends Comparable<Item>> {
 	}
 	//将索引为k元素设为item,可理解为改变优先级
 	public void change(int k, Item item){
+		//改变之后要么下沉要么上浮
 		int index=qp[k];
 		items[index]=item;
+		swim(index);
+		sink(index);
 	}
 	//是否存在索引为k的元素
 	public boolean contains(int k){
@@ -75,6 +78,8 @@ public class IndexMinPQ<Item extends Comparable<Item>> {
 		qp[pq[N]]=index;
 		qp[k]=-1;
 		N--;
+		swim(index);
+		sink(index);
 		if(N<items.length/4) resize(items.length/2+1);
 	}
 	//返回最小元素

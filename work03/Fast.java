@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.Queue;
 
 public class Fast {
 	//输出j个点
@@ -47,19 +46,7 @@ public class Fast {
 				j++;
 			}else{
 				if(j >= 2){
-					//检查左堆中是否有共线点
-					/*
-					int m;
-					do{
-						if(state >= start) break;
-						for(m=state;m<start && (pts[start].SLOPE_ORDER.compare(pts[m-1], pts[m]) == 0);m++);
-						state=m;
-					}while(pts[start].SLOPE_ORDER.compare(pts[state-1], pts[i-1])<0);
-					if(pts[start].SLOPE_ORDER.compare(pts[state-1], pts[i-1]) == 0){
-						continue;
-					}
-					*/
-					
+					//检查左序列中是否有共线点,左序列亦有序，所以可遍历查找
 					int m;
 					for(m=state;m<start;m++){
 						if(pts[start].SLOPE_ORDER.compare(pts[m], pts[i-1])>= 0) break;

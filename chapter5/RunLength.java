@@ -46,6 +46,7 @@ public class RunLength {
 		// TODO Auto-generated method stub
 		
 		BinaryIn in=new BinaryIn("/media/zxc/Personal Affairs/jwork/algs4-data/abra.txt");
+		//BinaryIn in=new BinaryIn("E:\\config.bin");
 		compress(in);
 		
 	}

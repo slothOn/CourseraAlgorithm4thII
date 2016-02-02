@@ -3,7 +3,6 @@ package work03;
 import java.util.Arrays;
 
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.introcs.StdDraw;
 
 public class Brute {
 	private static void sortAndDraw(Point p, Point q, Point r, Point s){
